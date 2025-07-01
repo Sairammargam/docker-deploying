@@ -2,6 +2,8 @@ FROM oven/bun:1
 
 ARG DB_URL
 
+ENV DB_URL=$DB_URL
+
 WORKDIR /usr/src/app
 
 COPY . .
@@ -9,7 +11,7 @@ COPY . .
 RUN bun install
 
 RUN bun run generate:db
-RUN DB_URL=$DB_URL bunx turbo build --filter=web...
+RUN  bunx turbo build --filter=web...
 
 EXPOSE 3000
 
