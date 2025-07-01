@@ -1,6 +1,6 @@
 import express from "express";
 import { prismaClient } from "db/client";
-
+//this is the backend
 const app = express();
 
 app.use(express.json());
