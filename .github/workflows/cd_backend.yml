@@ -23,3 +23,12 @@ jobs:
           file: ./docker/Dockerfile.backend
           push: true
           tags: sairamcodes/user-app-backend:${{ github.sha }}
+          
+      - name: Deploy to the VM
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" &> ~/ssh_key
+          mkdir -p /home/runner/.ssh
+          ls /home/runner/.ssh
+          chmod 700 /home/runner/ssh_key
+          ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@13.60.183.80 -t "docker stop user_backend && docker run --name user_backend -d -p 8080:8080 sairamcodes/user-app-backend:${{ github.sha }}"
+         
