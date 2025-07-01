@@ -24,11 +24,15 @@ jobs:
           push: true
           tags: sairamcodes/user-app-backend:${{ github.sha }}
           
-      - name: Deploy to the VM
+      - name: Deploy to VM
         run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" &> ~/ssh_key
-          mkdir -p /home/runner/.ssh
-          ls /home/runner/.ssh
-          chmod 700 /home/runner/ssh_key
-          ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@13.60.183.80 -t "sudo docker stop user_backend && sudo docker run --name user_backend -d -p 8080:8080 sairamcodes/user-app-backend:${{ github.sha }}"
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ssh_key
+          chmod 700 ssh_key
+          ssh -o StrictHostKeyChecking=no -t -i ssh_key ubuntu@13.60.183.80 "
+            sudo docker stop user_backend || true &&
+            sudo docker rm user_backend || true &&
+            sudo docker pull sairamcodes/user-app-backend:${{ github.sha }} &&
+            sudo docker run --name user_backend -d -p 8080:8080 sairamcodes/user-app-backend:${{ github.sha }}
+          "
+        
          
